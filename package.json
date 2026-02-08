@@ -1,0 +1,27 @@
+{
+  "name": "levelup-backend",
+  "version": "1.0.0",
+  "description": "Backend API for LevelUP by NG",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon server.js",
+    "dev": "node --watch server.js",
+    "seed": "node scripts/seedDatabase.js",
+    "clean": "node scripts/cleanDatabase.js",
+    "fix-duplicates": "node scripts/removeOldUsers.js",
+    "diagnose": "node scripts/diagnoseJob.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.3",
+    "nodemon": "^3.1.11"
+  }
+}
