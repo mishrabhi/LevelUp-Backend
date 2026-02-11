@@ -147,6 +147,9 @@ export const updateApplicationStatus = async (req, res) => {
   }
 };
 
+//get all applications of logged in student - only students can access this, and it returns all applications of the logged in student
+//Endpoint: GET /api/applications/my
+//Access: Student only
 export const getMyApplications = async (req, res) => {
   try {
     if (req.user.role !== 'Student') {
@@ -163,6 +166,9 @@ export const getMyApplications = async (req, res) => {
   }
 };
 
+//Reject job - only students can reject jobs, and this creates/updates an application with status 'Rejected' for that job
+//Endpoint: POST /api/applications/reject
+//Access: Student only
 export const rejectJob = async (req, res) => {
   try {
     if (req.user.role !== 'Student') {

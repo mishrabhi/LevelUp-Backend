@@ -16,7 +16,7 @@ router.get('/available', protect, getAvailableJobs);
 router.get('/overdeadline', protect, getOverDeadlineJobs);
 router.get('/', protect, getJobs);
 router.get('/:id', protect, getJob);
-router.post('/', protect, admin, createJob);
+router.post('/', protect, admin, createJob);  
 router.put('/:id', protect, admin, updateJob);
 router.delete('/:id', protect, admin, deleteJob);
 
