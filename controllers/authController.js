@@ -26,8 +26,7 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    //const isMatch = await user.matchPassword(password);
-    const isMatch = password === user.password;
+    const isMatch = await user.matchPassword(password);
     if (!isMatch) {
       console.log("returning invalid password");
       return res.status(401).json({ message: 'Invalid email or password' });
@@ -36,6 +35,74 @@ export const login = async (req, res) => {
     const token = generateToken(user._id);
 
     res.json({
+      success: true,
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        branch: user.branch,
+        year: user.year,
+        CGPA: user.CGPA,
+        skills: user.skills,
+        campus: user.campus,
+        createdAt: user.createdAt,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//Signup - students and admins can signup with their respective details
+//Endpoint: POST /api/auth/signup
+//Access: Public
+export const signup = async (req, res) => {
+  try {
+    const { name, email, password, role, branch, year, CGPA, skills, campus } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({ message: 'Please provide name, email, password, and role' });
+    }
+
+    // Validate role
+    if (!['Student', 'Admin'].includes(role)) {
+      return res.status(400).json({ message: 'Role must be either Student or Admin' });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already in use' });
+    }
+
+    // Create user object
+    const userData = {
+      name,
+      email,
+      password,
+      role,
+    };
+
+    // Add student-specific fields if role is Student
+    if (role === 'Student') {
+      userData.branch = branch || '';
+      userData.year = year || null;
+      userData.CGPA = CGPA || null;
+      userData.skills = Array.isArray(skills) ? skills : (skills ? [skills] : []);
+      userData.campus = campus || '';
+    }
+
+    // Create and save user
+    const user = new User(userData);
+    await user.save();
+
+    // Generate token
+    const token = generateToken(user._id);
+
+    res.status(201).json({
       success: true,
       token,
       user: {
