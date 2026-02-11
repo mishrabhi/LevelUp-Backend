@@ -43,6 +43,22 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  profilePicture: {
+    type: String,
+    default: '',
+  },
+  resumeUrl: {
+    type: String,
+    default: '',
+  },
+  portfolioUrl: {
+    type: String,
+    default: '',
+  },
+  experienceLetterUrl: {
+    type: String,
+    default: '',
+  },
   createdAt: {
     type: Date,
     default: Date.now,
