@@ -52,6 +52,11 @@ const jobSchema = new mongoose.Schema({
     ref: 'User',
     default: [],
   },
+  externalLink: {
+    type: String,
+    trim: true,
+    default: '',
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

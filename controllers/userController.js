@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import uploadToCloudinary from '../utils/uploadToCloudinary.js';
 
 //Get all users - only admin can access this endpoint, and they can filter by role and search by name/email
 //Endpoint: GET /api/users
@@ -56,6 +57,14 @@ export const getUser = async (req, res) => {
 //Access: Admin and Student (students only update their own profile)
 export const updateUser = async (req, res) => {
   try {
+    console.log('Update user request:', {
+      userId: req.params.id,
+      hasFile: !!req.file,
+      fileName: req.file?.originalname,
+      fileSize: req.file?.size,
+      body: Object.keys(req.body),
+    });
+
     const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -70,12 +79,56 @@ export const updateUser = async (req, res) => {
     delete req.body.password;
     delete req.body.role; // Don't allow role change through this endpoint
 
-    Object.assign(user, req.body);
+    // Parse FormData fields if they exist
+    const updateData = {};
+    Object.keys(req.body).forEach(key => {
+      const value = req.body[key];
+      if (key === 'year' || key === 'CGPA') {
+        // Convert numeric fields
+        updateData[key] = isNaN(value) ? value : (key === 'year' ? parseInt(value) : parseFloat(value));
+      } else if (key === 'skills') {
+        // Parse skills if it's a JSON string
+        try {
+          updateData[key] = typeof value === 'string' ? JSON.parse(value) : value;
+        } catch (e) {
+          console.warn('Could not parse skills:', value);
+          updateData[key] = value;
+        }
+      } else {
+        updateData[key] = value;
+      }
+    });
+
+    // Handle profile picture upload if file is provided
+    if (req.file) {
+      try {
+        console.log('Uploading file to Cloudinary...', {
+          originalname: req.file.originalname,
+          size: req.file.size,
+          mimetype: req.file.mimetype,
+        });
+        const filename = `${req.params.id}_profile_${Date.now()}`;
+        const uploadResult = await uploadToCloudinary(req.file.buffer, filename);
+        console.log('Upload successful:', uploadResult.public_id);
+        updateData.profilePicture = uploadResult.secure_url;
+      } catch (uploadError) {
+        const errorMessage = uploadError?.message || JSON.stringify(uploadError) || 'Unknown upload error';
+        console.error('Upload error details:', {
+          error: uploadError,
+          message: errorMessage,
+          toString: uploadError?.toString?.(),
+        });
+        return res.status(400).json({ message: `Failed to upload image: ${errorMessage}` });
+      }
+    }
+
+    Object.assign(user, updateData);
     await user.save();
 
     const userResponse = user.toJSON();
     res.json(userResponse);
   } catch (error) {
+    console.error('Update user error:', error);
     res.status(400).json({ message: error.message });
   }
 };

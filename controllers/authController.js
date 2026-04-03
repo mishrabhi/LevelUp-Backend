@@ -47,6 +47,10 @@ export const login = async (req, res) => {
         CGPA: user.CGPA,
         skills: user.skills,
         campus: user.campus,
+        profilePicture: user.profilePicture,
+        resumeUrl: user.resumeUrl,
+        portfolioUrl: user.portfolioUrl,
+        experienceLetterUrl: user.experienceLetterUrl,
         createdAt: user.createdAt,
       },
     });
@@ -115,6 +119,10 @@ export const signup = async (req, res) => {
         CGPA: user.CGPA,
         skills: user.skills,
         campus: user.campus,
+        profilePicture: user.profilePicture,
+        resumeUrl: user.resumeUrl,
+        portfolioUrl: user.portfolioUrl,
+        experienceLetterUrl: user.experienceLetterUrl,
         createdAt: user.createdAt,
       },
     });
@@ -139,6 +147,10 @@ export const getMe = async (req, res) => {
       CGPA: user.CGPA,
       skills: user.skills,
       campus: user.campus,
+      profilePicture: user.profilePicture,
+      resumeUrl: user.resumeUrl,
+      portfolioUrl: user.portfolioUrl,
+      experienceLetterUrl: user.experienceLetterUrl,
       createdAt: user.createdAt,
     });
   } catch (error) {

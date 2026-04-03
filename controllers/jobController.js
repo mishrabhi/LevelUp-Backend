@@ -58,7 +58,7 @@ export const getJob = async (req, res) => {
 export const createJob = async (req, res) => {
   try {
     // Extract job data
-    const { companyName, jobTitle, jobDescription, eligibilityCriteria, applicationDeadline, campuses, allowedStudents } = req.body;
+    const { companyName, jobTitle, jobDescription, externalLink, eligibilityCriteria, applicationDeadline, campuses, allowedStudents } = req.body;
 
     // Validate required fields
     if (!companyName || !jobTitle || !jobDescription || !eligibilityCriteria || !applicationDeadline || !campuses || campuses.length === 0) {
@@ -69,6 +69,7 @@ export const createJob = async (req, res) => {
       companyName,
       jobTitle,
       jobDescription,
+      externalLink: externalLink || '',
       eligibilityCriteria: {
         branch: eligibilityCriteria.branch || [],
         year: eligibilityCriteria.year || [],
@@ -105,11 +106,12 @@ export const updateJob = async (req, res) => {
     }
 
     // Update fields
-    const { companyName, jobTitle, jobDescription, eligibilityCriteria, applicationDeadline, campuses, allowedStudents } = req.body;
+    const { companyName, jobTitle, jobDescription, externalLink, eligibilityCriteria, applicationDeadline, campuses, allowedStudents } = req.body;
     
     if (companyName) job.companyName = companyName;
     if (jobTitle) job.jobTitle = jobTitle;
     if (jobDescription) job.jobDescription = jobDescription;
+    if (externalLink !== undefined) job.externalLink = externalLink;
     if (eligibilityCriteria) {
       job.eligibilityCriteria = {
         branch: eligibilityCriteria.branch || job.eligibilityCriteria.branch,
